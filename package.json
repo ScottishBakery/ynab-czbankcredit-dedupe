@@ -1,0 +1,17 @@
+{
+  "name": "ynab-dedupe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dedupe.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dedupe": "node dedupe"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ynab": "^1.28.0"
+  }
+}

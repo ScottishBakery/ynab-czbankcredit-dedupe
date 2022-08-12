@@ -1,0 +1,9 @@
+# ignore folder
+scratch
+node_modules
+
+# ignore credentials file
+credentials.js
+
+# ignore history file
+history.txt
