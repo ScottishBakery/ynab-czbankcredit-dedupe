@@ -5,9 +5,12 @@
 
 // from separate file:
 import { accessToken, budgetId } from "./credentials.js";
+
+// import utilities
 import fs from 'fs';
 import ynab from 'ynab';
 
+// instantiate client
 const ynabAPI = new ynab.API(accessToken);
 
 // function returns true if timeB is exactly one day before timeA.
@@ -32,7 +35,7 @@ const checkForHistory = async () => {
         const oldTransactions = JSON.parse(history).transactions;
         const oldTransactionsLength = oldTransactions.length;
         
-        const response = await ynabAPI.transactions.getTransactions(budgetId, undefined, undefined, server_knowledge || undefined);
+        const response = await ynabAPI.transactions.getTransactions(budgetId, undefined, undefined, server_knowledge);
         const newTransactions = response.data.transactions;
         console.log(`${oldTransactions.length} transactions gathered from history. ${response.data.transactions.length} gathered from YNAB.`);
         const transactions = [...oldTransactions, ...newTransactions];
@@ -44,6 +47,7 @@ const checkForHistory = async () => {
         return { transactions, oldTransactionsLength: 0 };
     }
 }
+
 const history = await checkForHistory();
 const originalTransactions = history.transactions;
 const oldTransactionsLength = history.oldTransactionsLength;
@@ -82,6 +86,7 @@ const extractDuplicates = (originalTransactions) => { // returns { duplicates, n
                     updatedOriginal.category_id = dupe.category_id;
                     updatedOriginal.category_name = dupe.category_name;
                     updatedOriginal.flag_color = 'blue';
+                    updatedOriginal.approved = true;
 
                     duplicates.push(flaggedDupe);
                     duplicates.push(updatedOriginal);
@@ -117,7 +122,6 @@ const transactions = extractDuplicates(originalTransactions);
 if (transactions.duplicates.length > 0) {
     const data = { "transactions": transactions.duplicates }
     ynabAPI.transactions.updateTransactions(budgetId, data).then(res => {
-        console.log(res)
         const server_knowledge = res.data.server_knowledge;
 
         // record non-duplicates.
